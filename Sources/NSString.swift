@@ -5,7 +5,7 @@
 //  Created by John Holdsworth on 11/06/2015.
 //  Copyright (c) 2015 John Holdsworth. All rights reserved.
 //
-//  $Id: //depot/NSLinux/Sources/NSString.swift#9 $
+//  $Id: //depot/NSLinux/Sources/NSString.swift#10 $
 //
 //  Repo: https://github.com/johnno1962/NSLinux
 //
@@ -44,7 +44,8 @@ public extension String {
                 let required = out - UnsafeMutablePointer<Int8>(arr) + extralen
                 if required > arr.count {
                     var newarr = [Int8]( count: Int(Double(required) * 1.5), repeatedValue: 0 )
-                    arr = strcpy( &newarr, arr )
+                    strcpy( &newarr, arr )
+                    arr = newarr
                     out = &arr + Int(strlen( arr ))
                 }
 
