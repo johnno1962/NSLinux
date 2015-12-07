@@ -5,7 +5,7 @@
 //  Created by John Holdsworth on 11/06/2015.
 //  Copyright (c) 2015 John Holdsworth. All rights reserved.
 //
-//  $Id: //depot/NSLinux/Sources/NSString.swift#10 $
+//  $Id: //depot/NSLinux/Sources/NSString.swift#11 $
 //
 //  Repo: https://github.com/johnno1962/NSLinux
 //
@@ -15,8 +15,6 @@
 #if os(Linux)
 import Foundation
 import Glibc
-
-public let NSUTF8StringEncoding = 0
 
 private let O = "0".ord, A = "A".ord, percent = "%".ord
 
@@ -65,7 +63,7 @@ public extension String {
         return String.fromCString( arr )
     }
 
-    public func stringByAddingPercentEscapesUsingEncoding( encoding: Int ) -> String? {
+    public func stringByAddingPercentEscapesUsingEncoding( encoding: UInt ) -> String? {
         return self
     }
 
