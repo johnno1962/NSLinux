@@ -18,11 +18,11 @@ import Glibc
 public let DISPATCH_QUEUE_CONCURRENT = 0, DISPATCH_QUEUE_PRIORITY_HIGH = 0, DISPATCH_QUEUE_PRIORITY_LOW = 0, DISPATCH_QUEUE_PRIORITY_BACKGROUND = 0
 
 public func dispatch_get_global_queue( type: Int, _ flags: Int ) -> Int {
-    return type
+    return 0
 }
 
 public func dispatch_queue_create( name: String, _ type: Int ) -> Int {
-    return type
+    return 0
 }
 
 public func dispatch_sync( queue: Int, _ block: () -> () ) {
@@ -39,8 +39,7 @@ private class pthreadBlock {
 }
 
 private func pthreadRunner( arg: UnsafeMutablePointer<Void> ) -> UnsafeMutablePointer<Void> {
-    let opaque = unsafeBitCast( arg, COpaquePointer.self )
-    let unmanaged = Unmanaged<pthreadBlock>.fromOpaque( opaque )
+    let unmanaged = Unmanaged<pthreadBlock>.fromOpaque( COpaquePointer( arg ) )
     unmanaged.takeUnretainedValue().block()
     unmanaged.release()
     return arg
@@ -48,12 +47,13 @@ private func pthreadRunner( arg: UnsafeMutablePointer<Void> ) -> UnsafeMutablePo
 
 public func dispatch_async( queue: Int, _ block: () -> () ) {
     let holder = Unmanaged.passRetained( pthreadBlock( block: block ) )
+    let pointer = UnsafeMutablePointer<Void>( holder.toOpaque() )
     #if os(Linux)
-        var pthread: pthread_t = 0
+    var pthread: pthread_t = 0
     #else
-        var pthread: pthread_t = nil
+    var pthread: pthread_t = nil
     #endif
-    if pthread_create( &pthread, nil, pthreadRunner, unsafeBitCast( holder, UnsafeMutablePointer<Void>.self ) ) == 0 {
+    if pthread_create( &pthread, nil, pthreadRunner, pointer ) == 0 {
         pthread_detach( pthread )
     }
     else {
