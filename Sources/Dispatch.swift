@@ -26,8 +26,8 @@ public func dispatch_get_global_queue( type: Int, _ flags: UInt ) -> dispatch_qu
     return type
 }
 
-public func dispatch_queue_create( name: UnsafePointer<Int8>, _ type: dispatch_queue_attr_t! ) -> dispatch_queue_t {
-    return type
+public func dispatch_queue_create( name: UnsafePointer<Int8>, _ type: dispatch_queue_attr_t? ) -> dispatch_queue_t {
+    return type ?? 0
 }
 
 public func dispatch_sync( queue: dispatch_queue_t, _ block: dispatch_block_t ) {
