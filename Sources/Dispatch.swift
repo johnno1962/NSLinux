@@ -15,25 +15,30 @@
 #if os(Linux)
 import Glibc
 
+public typealias dispatch_queue_t = Int
+public typealias dispatch_time_t = Int64 // is UInt64 in Foundation/Dispatch
+public typealias dispatch_block_t = () -> ()
+public typealias dispatch_queue_attr_t = Int
+ 
 public let DISPATCH_QUEUE_CONCURRENT = 0, DISPATCH_QUEUE_PRIORITY_HIGH = 0, DISPATCH_QUEUE_PRIORITY_LOW = 0, DISPATCH_QUEUE_PRIORITY_BACKGROUND = 0
 
-public func dispatch_get_global_queue( type: Int, _ flags: Int ) -> Int {
+public func dispatch_get_global_queue( type: Int, _ flags: UInt ) -> dispatch_queue_t {
     return type
 }
 
-public func dispatch_queue_create( name: String, _ type: Int ) -> Int {
-    return type
+public func dispatch_queue_create( name: UnsafePointer<Int8>, _ type: dispatch_queue_attr_t? ) -> dispatch_queue_t {
+    return type ?? 0
 }
 
-public func dispatch_sync( queue: Int, _ block: () -> () ) {
+public func dispatch_sync( queue: dispatch_queue_t, _ block: dispatch_block_t ) {
     block()
 }
 
 private class pthreadBlock {
 
-    let block: () -> ()
+    let block: dispatch_block_t
 
-    init( block: () -> () ) {
+    init( block: dispatch_block_t ) {
         self.block = block
     }
 }
@@ -45,7 +50,7 @@ private func pthreadRunner( arg: UnsafeMutablePointer<Void> ) -> UnsafeMutablePo
     return arg
 }
 
-public func dispatch_async( queue: Int, _ block: () -> () ) {
+public func dispatch_async( queue: dispatch_queue_t, _ block: dispatch_block_t ) {
     let holder = Unmanaged.passRetained( pthreadBlock( block: block ) )
     let pointer = UnsafeMutablePointer<Void>( holder.toOpaque() )
     #if os(Linux)
@@ -63,11 +68,11 @@ public func dispatch_async( queue: Int, _ block: () -> () ) {
 
 public let DISPATCH_TIME_NOW = 0, NSEC_PER_SEC = 1_000_000_000
 
-public func dispatch_time( now: Int, _ nsec: Int64 ) -> Int64 {
+public func dispatch_time( now: dispatch_time_t, _ nsec: Int64 ) -> dispatch_time_t {
     return nsec
 }
 
-public func dispatch_after( delay: Int64, _ queue: Int, _ block: () -> () ) {
+public func dispatch_after( delay: dispatch_time_t, _ queue: dispatch_queue_t, _ block: dispatch_block_t ) {
     dispatch_async( queue, {
         sleep( UInt32(Int(delay)/NSEC_PER_SEC) )
         block()
