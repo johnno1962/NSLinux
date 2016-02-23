@@ -5,7 +5,7 @@
 //  Created by John Holdsworth on 11/06/2015.
 //  Copyright (c) 2015 John Holdsworth. All rights reserved.
 //
-//  $Id: //depot/NSLinux/Sources/NSString.swift#11 $
+//  $Id: //depot/NSLinux/Sources/NSString.swift#12 $
 //
 //  Repo: https://github.com/johnno1962/NSLinux
 //
@@ -27,6 +27,12 @@ public extension String {
     public var ord: Int8 {
         return Int8(utf8.first!)
     }
+
+    public func stringByAddingPercentEscapesUsingEncoding( encoding: UInt ) -> String? {
+        return self
+    }
+
+/* no longer required as implemented in Linux Swift Foundation
 
     public var stringByRemovingPercentEncoding: String? {
         var arr = [Int8]( count: 100000, repeatedValue: 0 )
@@ -63,10 +69,6 @@ public extension String {
         return String.fromCString( arr )
     }
 
-    public func stringByAddingPercentEscapesUsingEncoding( encoding: UInt ) -> String? {
-        return self
-    }
-
     public func stringByTrimmingCharactersInSet( cset: NSCharacterSet ) -> String {
         return self
     }
@@ -93,6 +95,7 @@ public extension String {
 
         return out
     }
+*/
 
     public func stringByReplacingOccurrencesOfString( str1: String, withString str2: String ) -> String {
         return componentsSeparatedByString( str1 ).joinWithSeparator( str2 )
