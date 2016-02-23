@@ -66,7 +66,7 @@ public func dispatch_async( queue: dispatch_queue_t, _ block: dispatch_block_t )
     }
 }
 
-public let DISPATCH_TIME_NOW = 0, NSEC_PER_SEC = 1_000_000_000
+public let DISPATCH_TIME_NOW: dispatch_time_t = 0, NSEC_PER_SEC = 1_000_000_000
 
 public func dispatch_time( now: dispatch_time_t, _ nsec: Int64 ) -> dispatch_time_t {
     return nsec
